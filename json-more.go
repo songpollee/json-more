@@ -2,15 +2,15 @@ package jsonMore
 // Example
 //
 // type Chlid struct {
-//   D string `json:"d" jsonValidate:"required"`
+//   D string `json:"d" jsonMore:"required"`
 // }
 //
 // type Parent struct {
 //   A string `json:"a"`
-//   B int `json:"b" jsonValidate:"required"`
-//   C Chlid `json:"c" jsonValidate:"required"`
-//   E []int `json:"e" jsonValidate:"required"`
-//   F []Chlid `json:"f" jsonValidate:"required"`
+//   B int `json:"b" jsonMore:"required"`
+//   C Chlid `json:"c" jsonMore:"required"`
+//   E []int `json:"e" jsonMore:"required"`
+//   F []Chlid `json:"f" jsonMore:"required"`
 // }
 //
 // func main() {
@@ -40,7 +40,7 @@ func validate(reflectType reflect.Type, targetMap map[string]interface{}) error 
   for i := 0; i < reflectType.NumField(); i++ {
     currentType := reflectType.Field(i)
     kind := currentType.Type.Kind()
-    jsonValidateTag := currentType.Tag.Get("jsonValidate")
+    jsonValidateTag := currentType.Tag.Get("jsonMore")
     jsonKey := GetJsonKey(currentType)
     currentMap, ok := targetMap[jsonKey]
     if(jsonValidateTag == "required") {
