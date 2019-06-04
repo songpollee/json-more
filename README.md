@@ -1,5 +1,5 @@
-# json-more
-golang json validator is used for validating missing data in JSON. The way it works is to notify user of missing data.
+# Json-More
+Json-More is used for validating missing data in JSON. The way it works is to notify user of missing data.
 
 # License
 This library is distributed with [GNU GPLv3](https://spdx.org/licenses/GPL-3.0.html)
