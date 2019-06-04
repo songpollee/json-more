@@ -37,7 +37,7 @@ func main() {
     "f": [{ "d": "c1" }, { "d": "c2" }]
   }`)
   err := jsonMore.ValidateJson(Parent{}, rawJson)
-  fmt.Println(err);
+  fmt.Println(err); // nil
 
   missingBJson := []byte(`{
     "a": "abc",
@@ -46,6 +46,6 @@ func main() {
     "f": [{ "d": "c1" }, { "d": "c2" }]
   }`)
   err = jsonMore.ValidateJson(Parent{}, missingBJson)
-  fmt.Println(err);
+  fmt.Println(err); // invalid missing 'Parent.b'
 }
 ```
