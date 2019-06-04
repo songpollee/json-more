@@ -1,8 +1,8 @@
 # json-more
 golang json validator
 
-
-Example
+```go
+// Example
 
 type Chlid struct {
  D string `json:"d" jsonValidate:"required"`
@@ -21,3 +21,4 @@ func main() {
  err := jsonMore.ValidateJson(Parent{}, rawJson)
  fmt.Println(err);
 }
+```
