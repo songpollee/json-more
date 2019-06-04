@@ -29,12 +29,23 @@ type Parent struct {
 }
 
 func main() {
- rawJson := []byte(`{"a": "abc", "b": 0, "c": { "d": "xyz" }, "e": [1, 2], "f": [{ "d": "d1" }, { "d": "d2" }]}`)
- err := jsonMore.ValidateJson(Parent{}, rawJson)
- fmt.Println(err); // nil
- 
- missingBJson := []byte(`{"a": "abc", "c": { "d": "xyz" }, "e": [1, 2], "f": [{ "d": "d1" }, { "d": "d2" }]}`)
- err = jsonMore.ValidateJson(Parent{}, rawJson)
- fmt.Println(err); // invalid missing 'Parent.b'
+  rawJson := []byte(`{
+    "a": "abc",
+    "b": 0,
+    "c": { "d": "xyz" },
+    "e": [1, 2],
+    "f": [{ "d": "c1" }, { "d": "c2" }]
+  }`)
+  err := jsonMore.ValidateJson(Parent{}, rawJson)
+  fmt.Println(err);
+
+  missingBJson := []byte(`{
+    "a": "abc",
+    "c": { "d": "xyz" },
+    "e": [1, 2],
+    "f": [{ "d": "c1" }, { "d": "c2" }]
+  }`)
+  err = jsonMore.ValidateJson(Parent{}, missingBJson)
+  fmt.Println(err);
 }
 ```
