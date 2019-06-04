@@ -1,5 +1,8 @@
 # json-more
-golang json validator
+golang json validator is used for validating missing data in JSON. The way it works is to notify user of missing data.
+
+# License
+This library is distributed with [GNU GPLv3](https://spdx.org/licenses/GPL-3.0.html)
 
 ## Installation
 ```bash
@@ -28,6 +31,10 @@ type Parent struct {
 func main() {
  rawJson := []byte(`{"a": "abc", "b": 0, "c": { "d": "xyz" }, "e": [1, 2], "f": [{ "d": "d1" }, { "d": "d2" }]}`)
  err := jsonMore.ValidateJson(Parent{}, rawJson)
- fmt.Println(err);
+ fmt.Println(err); // nil
+ 
+ missingBJson := []byte(`{"a": "abc", "c": { "d": "xyz" }, "e": [1, 2], "f": [{ "d": "d1" }, { "d": "d2" }]}`)
+ err = jsonMore.ValidateJson(Parent{}, rawJson)
+ fmt.Println(err); // invalid missing 'Parent.b'
 }
 ```
