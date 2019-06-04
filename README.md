@@ -1,8 +1,17 @@
 # json-more
 golang json validator
 
+## Installation
+```bash
+go get github.com/songpollee/json-more
+```
+
+## Example
 ```go
-// Example
+import (
+  "fmt"
+  "github.com/songpollee/json-more"
+)
 
 type Chlid struct {
  D string `json:"d" jsonValidate:"required"`
