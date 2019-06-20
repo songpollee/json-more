@@ -65,7 +65,11 @@ func validate(reflectType reflect.Type, targetMap map[string]interface{}) error 
 }
 
 func ValidateMap(targetStruct interface{}, targetMap map[string]interface{}) error {
-  reflectStruct := reflect.TypeOf(targetStruct)
+  targetRealStruct := targetStruct
+  if(reflect.TypeOf(targetStruct).Kind() == reflect.Ptr) {
+    targetRealStruct = reflect.ValueOf(targetStruct).Elem().Interface()
+  }
+  reflectStruct := reflect.TypeOf(targetRealStruct)
   return validate(reflectStruct, targetMap)
 }
 
@@ -73,5 +77,19 @@ func ValidateJson(targetStruct interface{}, myJson []byte) error {
   var targetMap map[string]interface{}
   err := json.Unmarshal(myJson, &targetMap)
   if(err != nil) { return err }
-  return ValidateMap(targetStruct, targetMap)
+  targetRealStruct := targetStruct
+  if(reflect.TypeOf(targetStruct).Kind() == reflect.Ptr) {
+    targetRealStruct = reflect.ValueOf(targetStruct).Elem().Interface()
+  }
+  return ValidateMap(targetRealStruct, targetMap)
+}
+
+func ToStruct(targetStruct interface{}, myJson []byte) error {
+  if(reflect.TypeOf(targetStruct).Kind() != reflect.Ptr) { return errors.New("invalid must pass params with address struct") }
+  targetRealStruct := reflect.ValueOf(targetStruct).Elem().Interface()
+  notMissingField := ValidateJson(targetRealStruct, myJson)
+  if(notMissingField != nil) { return notMissingField }
+  err := json.Unmarshal(myJson, targetStruct)
+  if(err != nil) { return err }
+  return nil
 }
