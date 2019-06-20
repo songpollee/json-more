@@ -11,6 +11,8 @@ go get github.com/songpollee/json-more
 
 ## Example
 ```go
+package main
+
 import (
   "fmt"
   "github.com/songpollee/json-more"
@@ -47,5 +49,9 @@ func main() {
   }`)
   err = jsonMore.ValidateJson(Parent{}, missingBJson)
   fmt.Println(err); // invalid missing 'Parent.b'
+  
+  parent := Parent{}
+  err = jsonMore.ToStruct(&parent, rawJson)
+  fmt.Println("parent", parent) // {abc 0 {xyz} [1 2] [{c1} {c2}]}
 }
 ```
