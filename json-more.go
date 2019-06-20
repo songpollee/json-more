@@ -36,8 +36,10 @@ func GetJsonKey(reflectStructField reflect.StructField) string {
   return nameField
 }
 
-func validate(reflectType reflect.Type, targetMap map[string]interface{}) error {
+func validate(reflectValue reflect.Value, targetMap map[string]interface{}) error {
+  reflectType := reflectValue.Type()
   for i := 0; i < reflectType.NumField(); i++ {
+    currentValue := reflectValue.Field(i)
     currentType := reflectType.Field(i)
     kind := currentType.Type.Kind()
     jsonValidateTag := currentType.Tag.Get("jsonMore")
@@ -47,18 +49,21 @@ func validate(reflectType reflect.Type, targetMap map[string]interface{}) error 
       if(!ok) { return errors.New(fmt.Sprintf("invalid missing '%s.%s'", reflectType.Name(), jsonKey)) }
     }
     if(kind.String() == "struct" && ok) {
-      err := validate(currentType.Type, currentMap.(map[string]interface{}))
+      err := validate(currentValue, currentMap.(map[string]interface{}))
       if(err != nil) { return err }
     } else if(kind.String() == "slice" && ok) {
       kindElem := currentType.Type.Elem().Kind()
       if(kindElem.String() == "struct" && ok) {
-        typeElem := currentType.Type.Elem()
         arrayMap := currentMap.([]interface{})
         for j := 0; j < len(arrayMap); j++ {
-          err := validate(typeElem, arrayMap[j].(map[string]interface{}))
+          err := validate(currentValue, arrayMap[j].(map[string]interface{}))
           if(err != nil) { return err }
         }
       }
+    } else if(kind.String() == "interface" && ok) {
+      realValue := currentValue.Elem().Elem()
+      err := validate(realValue, currentMap.(map[string]interface{}))
+      if(err != nil) { return err }
     }
   }
   return nil
@@ -69,7 +74,7 @@ func ValidateMap(targetStruct interface{}, targetMap map[string]interface{}) err
   if(reflect.TypeOf(targetStruct).Kind() == reflect.Ptr) {
     targetRealStruct = reflect.ValueOf(targetStruct).Elem().Interface()
   }
-  reflectStruct := reflect.TypeOf(targetRealStruct)
+  reflectStruct := reflect.ValueOf(targetRealStruct)
   return validate(reflectStruct, targetMap)
 }
 
@@ -77,11 +82,7 @@ func ValidateJson(targetStruct interface{}, myJson []byte) error {
   var targetMap map[string]interface{}
   err := json.Unmarshal(myJson, &targetMap)
   if(err != nil) { return err }
-  targetRealStruct := targetStruct
-  if(reflect.TypeOf(targetStruct).Kind() == reflect.Ptr) {
-    targetRealStruct = reflect.ValueOf(targetStruct).Elem().Interface()
-  }
-  return ValidateMap(targetRealStruct, targetMap)
+  return ValidateMap(targetStruct, targetMap)
 }
 
 func ToStruct(targetStruct interface{}, myJson []byte) error {
